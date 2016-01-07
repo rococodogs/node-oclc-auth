@@ -1,0 +1,18 @@
+{
+  "name": "oclc-access-token",
+  "version": "0.0.0",
+  "description": "Tools for requesting/parsing OCLC Access Tokens",
+  "main": "index.js",
+  "dependencies": {
+    "oclc-wskey": "2.0.0"
+  },
+  "devDependencies": {
+    "tape": "4.4.0"
+  },
+  "scripts": {
+    "test": "tape ./test.js"
+  },
+  "keywords": [],
+  "author": "Adam Malantonio <adam.malantonio@gmail.com>",
+  "license": "MIT"
+}
