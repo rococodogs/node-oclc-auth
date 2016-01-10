@@ -1,6 +1,5 @@
 var tape = require('tape')
 var AccessToken = require('./')
-var Token = require('./token')
 var data = {
   "access_token":"tk_Yebz4BpEp9dAsghA7KpWx6dYD1OZKWBlHjqW",
   "token_type":"bearer",
@@ -10,26 +9,43 @@ var data = {
   "contextInstitutionId": "128807",
   "expires_at": "2013-08-23 18:45:29Z"
 }
-var token = new Token(data)
+var token = new AccessToken(data)
 
 // Token tests
 
-tape('[token.js] toString prints `access_token` property', function (t) {
+tape('token.toString() prints `access_token` property', function (t) {
+  t.plan(1)
   t.equals(token + '', data.access_token)
-  t.end()
 })
 
-tape('[token.js] expired token is expired', function (t) {
+tape('token.expired is expired', function (t) {
+  t.plan(1)
   t.ok(token.expired, 'should be true')
-  t.end()
 })
 
-tape('[token.js] toHeader prints correctly', function (t) {
+tape("updated token.expires_at isn't expired", function (t) {
+  var future = new Date(Date.now() + 10e8)
+               .toISOString()
+               .replace('T', ' ')
+               .replace(/\.(\d{2})\d/g, ':$1')
+
+  var cloned = {}
+  for (var key in data) {
+    if (data.hasOwnProperty(key)) cloned[key] = data[key]
+  }
+
+  cloned['expires_at'] = future
+  var newToken = AccessToken(cloned)
+  t.plan(1)
+  t.ok(!newToken.expired, 'newToken.expired should be false')
+})
+
+tape('token.toHeader() prints Bearer header', function (t) {
   t.equals(token.toHeader(), 'Bearer: ' + data.access_token)
   t.end()
 })
 
-tape('[parse-response-token.js] works with full urls', function (t) {
+tape('AccessToken.parseTokenResponse() works with full urls', function (t) {
   var qs = require('querystring').encode(data)
   var hash = '#' + qs
   var fullUrl = 'http://localhost/' + hash
@@ -39,7 +55,7 @@ tape('[parse-response-token.js] works with full urls', function (t) {
   t.end()
 })
 
-tape('[get-login-url.js] builds url', function (t) {
+tape('AccessToken.getLoginUrl() builds url', function (t) {
   var expect = 'https://authn.sd00.worldcat.org/oauth2/authorizeCode?'
              + 'client_id=jdfRzYZbLc8HZXFByyyLGrUqTOOmkJOAPi4tAN0E7xI3hgE2xDgwJ7YPtkwM6W3ol5yz0d0JHgE1G2Wa'
              + '&authenticatingInstitutionId=128807&contextInstitutionId=128807'
