@@ -1,12 +1,12 @@
 {
-  "name": "oclc-access-token",
+  "name": "oclc-auth",
   "version": "0.0.0",
-  "description": "Tools for requesting/parsing OCLC Access Tokens",
+  "description": "Authentication toolkit for OCLC web services",
   "main": "index.js",
-  "dependencies": {
-    "oclc-wskey": "2.0.0"
-  },
   "devDependencies": {
+    "cookie-parser": "1.4.0",
+    "express": "4.13.3",
+    "oclc-wskey": "3.0.2",
     "tape": "4.4.0"
   },
   "scripts": {
