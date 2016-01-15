@@ -15,7 +15,9 @@ function OCLCAuth (opts) {
   this.contextInstitutionId = opts.contextInstitutionId || opts.authenticatingInstitutionId
 }
 
-OCLCAuth.prototype.getAuthUrl = function getAuthUrl (opts, cb) {
+module.exports.getAuthUrl =
+OCLCAuth.prototype.getAuthUrl =
+function getAuthUrl (opts, cb) {
   if (typeof opts === 'function') {
     cb = opts
     opts = {}
@@ -23,18 +25,20 @@ OCLCAuth.prototype.getAuthUrl = function getAuthUrl (opts, cb) {
 
   opts = opts || {}
 
-  var redirect_uri = this.wskey.redirect_uri
-  var scope = this.wskey.scope
+  var redirect_uri = opts.redirect_uri || this.wskey.redirect_uri
+  var scope = opts.scope || this.wskey.scope
   var type = opts.response_type || 'token'
   var clientId = opts.clientId || this.wskey.key
+  var authId = opts.authenticatingInstitutionId || this.authenticatingInstitutionId
+  var contextId = opts.contextInstitutionId || this.contextInstitutionId
   var async = (cb && typeof cb === 'function') ? true : false
   var missingThing
 
   if (!clientId)
     missingThing = 'clientId (or WSKey)'
-  else if (!this.authenticatingInstitutionId)
+  else if (!authId)
     missingThing = 'authenticatingInstitutionId'
-  else if (!this.contextInstitutionId)
+  else if (!contextId)
     missingThing = 'contextInstitutionId'
   else if (!redirect_uri)
     missingThing = 'redirect_uri'
@@ -49,9 +53,9 @@ OCLCAuth.prototype.getAuthUrl = function getAuthUrl (opts, cb) {
 
   var querystring = qs.stringify({
     client_id: clientId,
-    authenticatingInstitutionId: this.authenticatingInstitutionId,
-    contextInstitutionId: this.contextInstitutionId,
-    redirect_uri: this.wskey.redirect_uri,
+    authenticatingInstitutionId: authId,
+    contextInstitutionId: contextId,
+    redirect_uri: redirect_uri,
     response_type: type,
     scope: scope.join(' '),
   })
